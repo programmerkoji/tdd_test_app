@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
 
         // 15userがランダムで2〜5件ブログ投稿を所有
         User::factory(15)->create()->each(function ($user) {
-            Post::factory(random_int(2, 5))->create(['user_id' => $user])
+            Post::factory(random_int(2, 5))->random()->create(['user_id' => $user])
                 ->each(function ($post) {
                     Comment::factory(random_int(1, 5))->create(['post_id' => $post]);
                 });

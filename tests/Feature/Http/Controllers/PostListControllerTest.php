@@ -36,6 +36,20 @@ class PostListControllerTest extends TestCase
     }
 
     /** @test */
+    function ブログの一覧で非公開のブログは表示されない()
+    {
+        $post1 = Post::factory()->closed()->create([
+            'title' => 'これは非公開のブログです',
+        ]);
+        $post2 = Post::factory()->create([
+            'title' => 'これは公開済みのブログです',
+        ]);
+        $this->get('/')
+            ->assertDontSee('これは非公開のブログです')
+            ->assertSee('これは公開済みのブログです');
+    }
+
+    /** @test */
     function factoryの観察 ()
     {
         $post = Post::factory()->create();
@@ -44,5 +58,17 @@ class PostListControllerTest extends TestCase
         dump(User::get()->toArray());
 
         $this->assertTrue(true);
+    }
+
+    /** @test */
+    function ブログの公開・非公開のscope()
+    {
+        $post1 = Post::factory()->closed()->create();
+        $post2 = Post::factory()->create();
+
+        $posts = Post::onlyOpen()->get();
+
+        $this->assertFalse($posts->contains($post1));
+        $this->assertTrue($posts->contains($post2));
     }
 }
